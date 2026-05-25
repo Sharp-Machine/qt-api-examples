@@ -143,7 +143,12 @@
                         headers: { 'X-QT-Api-Key': 'qt_demo_123' }
                     });
                     
-                    if (pollRes.status !== 404 && pollRes.ok) {
+                    if (!pollRes.ok && pollRes.status !== 404) {
+                        const errText = await pollRes.text();
+                        throw new Error(`API Polling Error: ${pollRes.status} ${errText}`);
+                    }
+                    
+                    if (pollRes.ok) {
                         const data = await pollRes.json();
                         if (data.done) {
                             if(data.status === "FAILED") throw new Error(data.error);
