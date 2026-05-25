@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QT Engine - Robotics Zero-Setup Sandbox</title>
+    <!-- Tailwind for instant beautiful styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Plotly.js for high-performance plotting of 100 paths -->
+    <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+    <style>
+        body { background-color: #0f1117; color: #e2e8f0; font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+        .glass-panel { background: rgba(30, 33, 43, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; }
+        .slider { -webkit-appearance: none; width: 100%; height: 6px; border-radius: 4px; background: #374151; outline: none; opacity: 0.9; transition: opacity .2s; }
+        .slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 16px; height: 16px; border-radius: 50%; background: #14b8a6; cursor: pointer; }
+    </style>
+</head>
+<body class="min-h-screen p-8 flex flex-col items-center justify-center">
+
+    <div class="w-full max-w-5xl">
+        <div class="mb-8 text-center">
+            <h1 class="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-blue-500 mb-2">Quantile Transformer</h1>
+            <p class="text-gray-400">Zero-Setup Browser Inference • Physical AI Trajectory Forecasting</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            
+            <!-- Controls Panel -->
+            <div class="glass-panel p-6 col-span-1 flex flex-col gap-6">
+                <div>
+                    <h3 class="text-lg font-semibold mb-4 text-white flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-teal-400"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                        Joint Conditions
+                    </h3>
+                    
+                    <div class="mb-4">
+                        <label class="flex justify-between text-xs font-mono text-gray-400 mb-1">
+                            <span>BASE (rad)</span>
+                            <span id="valBase">0.00</span>
+                        </label>
+                        <input type="range" id="sliderBase" min="-2.89" max="2.89" step="0.01" value="0.0" class="slider" oninput="updateVal('valBase', this.value)">
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="flex justify-between text-xs font-mono text-gray-400 mb-1">
+                            <span>SHOULDER (rad)</span>
+                            <span id="valShoulder">0.00</span>
+                        </label>
+                        <input type="range" id="sliderShoulder" min="-1.76" max="1.76" step="0.01" value="0.0" class="slider" oninput="updateVal('valShoulder', this.value)">
+                    </div>
+                </div>
+
+                <button id="btnGenerate" class="w-full py-3 px-4 bg-teal-600 hover:bg-teal-500 text-white rounded-lg font-medium transition-colors flex justify-center items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                    <span>Generate 100 Futures</span>
+                </button>
+                
+                <div class="mt-auto">
+                    <div class="text-xs text-gray-500 font-mono mb-1">STATUS</div>
+                    <div id="statusText" class="text-sm text-teal-400 font-mono bg-black/30 p-2 rounded border border-white/5">Awaiting Input...</div>
+                </div>
+            </div>
+
+            <!-- Visualization Panel -->
+            <div class="glass-panel col-span-2 flex flex-col relative overflow-hidden min-h-[400px]">
+                <div id="loadingOverlay" class="absolute inset-0 bg-black/50 backdrop-blur-sm z-10 flex items-center justify-center hidden">
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-500"></div>
+                </div>
+                
+                <div class="p-4 border-b border-white/10 flex justify-between items-center">
+                    <h3 class="font-medium text-gray-300 text-sm">Predicted Base Joint Trajectories (t to t+16)</h3>
+                    <span id="latencyText" class="text-xs font-mono text-gray-500"></span>
+                </div>
+                
+                <div id="plotDiv" class="flex-1 w-full h-full p-2"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const API_KEY = "AIzaSyDAVGM-E3WIjd4PAJnErxSDzb-sXYIZdE8";
+        const BASE_URL = "https://qt-paas-gateway-ane34s9g.uc.gateway.dev";
+        
+        function updateVal(id, val) {
+            document.getElementById(id).textContent = parseFloat(val).toFixed(2);
+        }
+
+        // Initialize empty plot
+        const initPlot = () => {
+            const layout = {
+                paper_bgcolor: 'transparent',
+                plot_bgcolor: 'transparent',
+                margin: { t: 10, r: 10, b: 30, l: 30 },
+                xaxis: { showgrid: true, gridcolor: 'rgba(255,255,255,0.05)', zeroline: false, color: '#64748b' },
+                yaxis: { showgrid: true, gridcolor: 'rgba(255,255,255,0.05)', zeroline: false, color: '#64748b' },
+                showlegend: false
+            };
+            Plotly.newPlot('plotDiv', [], layout, {displayModeBar: false});
+        }
+        initPlot();
+
+        document.getElementById('btnGenerate').addEventListener('click', async () => {
+            const btn = document.getElementById('btnGenerate');
+            const status = document.getElementById('statusText');
+            const overlay = document.getElementById('loadingOverlay');
+            const latencyText = document.getElementById('latencyText');
+            
+            const vBase = parseFloat(document.getElementById('sliderBase').value);
+            const vShoulder = parseFloat(document.getElementById('sliderShoulder').value);
+
+            btn.disabled = true;
+            overlay.classList.remove('hidden');
+            latencyText.textContent = '';
+            
+            const startTime = performance.now();
+
+            try {
+                // 1. Initiate Generation
+                status.textContent = "Initiating QT Model...";
+                const initRes = await fetch(`${BASE_URL}/generate?key=${API_KEY}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-QT-Api-Key': 'qt_demo_123' },
+                    body: JSON.stringify({
+                        type: "robotics_7dof",
+                        model_id: "nonlinear",
+                        n_samples: 100,
+                        prefix: [vBase, vShoulder]
+                    })
+                });
+                
+                if (!initRes.ok) throw new Error("API Connection Failed");
+                const { operation_id } = await initRes.json();
+                
+                // 2. Poll for results
+                status.textContent = "Computing 100 Latent Paths...";
+                let isDone = false;
+                let finalData = null;
+                
+                while (!isDone) {
+                    await new Promise(r => setTimeout(r, 500));
+                    const pollRes = await fetch(`${BASE_URL}/operations/${operation_id}?key=${API_KEY}`, {
+                        headers: { 'X-QT-Api-Key': 'qt_demo_123' }
+                    });
+                    
+                    if (pollRes.status !== 404 && pollRes.ok) {
+                        const data = await pollRes.json();
+                        if (data.done) {
+                            if(data.status === "FAILED") throw new Error(data.error);
+                            isDone = true;
+                            finalData = data.response;
+                        }
+                    }
+                }
+                
+                // 3. Render Results
+                status.textContent = "Rendering Distributions...";
+                const samples = finalData.samples; // Array of 100 arrays of 32 dims
+                
+                const traces = [];
+                // We will plot the first dimension (Base joint) across simulated time
+                const x_time = Array.from({length: 16}, (_, i) => i);
+                
+                samples.forEach((sample, i) => {
+                    // For visualization, we interpolate from start to target over 16 steps
+                    const target = sample[0]; // Dim 0 is Base
+                    const path = x_time.map(t => vBase + (target - vBase) * (t/15));
+                    
+                    traces.push({
+                        x: x_time,
+                        y: path,
+                        type: 'scatter',
+                        mode: 'lines',
+                        line: { color: i === 0 ? '#14b8a6' : 'rgba(20, 184, 166, 0.05)', width: i === 0 ? 3 : 1 },
+                    });
+                });
+
+                Plotly.react('plotDiv', traces, document.getElementById('plotDiv').layout);
+                
+                const endTime = performance.now();
+                latencyText.textContent = `Server Inference: ${finalData.inference_latency_ms.toFixed(1)}ms | Total RTT: ${(endTime-startTime).toFixed(0)}ms`;
+                status.textContent = "SUCCESS";
+
+            } catch (err) {
+                status.textContent = `ERROR: ${err.message}`;
+                status.classList.replace('text-teal-400', 'text-red-400');
+            } finally {
+                btn.disabled = false;
+                overlay.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,30 +1,33 @@
-# qt-api-examples
+<div align="center">
+  <img src="robotics_plot.png" alt="QT Structural Uncertainty Prediction" width="800"/>
+  <h1>Quantile Transformer (QT) Engine</h1>
+  <p><strong>Zero-Setup API Examples for Continuous Physical AI</strong></p>
+</div>
 
-This repository provides minimal, zero-setup examples demonstrating how to use the Quantile Transformer (QT) Engine API. The QT Engine is a real-time Physical AI that predicts continuous, multidimensional structural uncertainty.
+---
 
-These examples use standard HTTP requests to communicate with the asynchronous cloud API, ensuring that you can easily integrate QT probability forecasting into your existing robotics or quantitative finance stack.
+The Quantile Transformer (QT) Engine is a real-time Physical AI that predicts continuous, multidimensional structural uncertainty. 
 
-## Examples Provided
+This repository provides zero-friction "Sandboxes" that allow you to generate 100 conditional future trajectories in **under 60 seconds**, without installing any neural network weights or managing GPUs. The heavy latent-space transformations execute securely via our asynchronous Cloud API.
 
-- **Robotics (7 DOF):** `generate_robotics.js` - A Node.js example showing how to fetch 100 conditional future trajectories for a 7-DOF robotic arm.
-- **Finance (Tabular):** `generate_tabular.py` - A Python example showing how to fetch future paths conditioned on tabular features.
+## 🚀 The "WOW" Sandboxes
 
-## Usage
+Choose your preferred environment to instantly visualize the power of QT:
 
-You will need a valid API key. A free tier demo key (`AIzaSyDAVGM-E3WIjd4PAJnErxSDzb-sXYIZdE8`) is hardcoded in the examples for quick testing.
+### 1. The Browser Sandbox (Web/JS)
+Double-click `index.html` to open it in your browser. No `npm install`, no build steps. It instantly uses Plotly.js to render 100 conditional robotics trajectories directly in your browser.
 
-### Python
-```bash
-pip install requests
-python generate_tabular.py
-```
+### 2. The Notebook Sandbox (Data Science)
+Open `quickstart.ipynb` in Jupyter or VSCode. This notebook uses a beautiful dark-mode `matplotlib` theme to plot the confidence intervals and physical trajectories.
 
-### Node.js
-```bash
-node generate_robotics.js
-```
+## 💻 Raw API Scripts
+If you just want the raw HTTP polling logic to integrate into your backend:
+- **Python:** `generate_tabular.py`
+- **Node.js:** `generate_robotics.js`
 
-## Need a Native SDK?
+*(Note: These examples use a hardcoded free-tier API key `AIzaSyDAVGM-E3WIjd4PAJnErxSDzb-sXYIZdE8` for instant testing).*
+
+## 📦 Need a Native SDK?
 If you are working in Python, we recommend using our native SDK which abstracts away the HTTP polling entirely:
 ```bash
 pip install qt-client
